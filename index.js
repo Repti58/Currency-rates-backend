@@ -1,9 +1,7 @@
 const express = require("express");
 const needle = require("needle");
 const cors = require("cors");
-const axios = require("axios");
 const convert = require("xml-js");
-const { response } = require("express");
 const app = express();
 const PORT = process.env.port || 3003;
 
@@ -17,54 +15,58 @@ const yesterdayDate = () => {
 
   let yy = date.getFullYear();
   if (yy < 10) mm = "0" + yy;
-console.log(`${dd}/${mm}/${yy}`);
-  return(`${dd}/${mm}/${yy}`);
+  console.log(`${dd}/${mm}/${yy}`);
+  return `${dd}/${mm}/${yy}`;
 };
 
-const getCurrencyDataToday = async () => {
-  console.log("getCurrencyData>>>>>>>>>>>>> ");
+const getCurrency = async () => {
+  debugger;
+  let ratesDataToday;
+  let ratesDataYesterday;
 
-  const curData = await needle(
-    "get",
-    "http://www.cbr.ru/scripts/XML_daily.asp",
-    {
-      compressed: true,
-      content_type: true,
-      parse_response: false,
-      decode_response: true,
-    }
-  ).then((response) => {
-    const convertedData = convert.xml2js(response.body, {
-      compact: true,
-      spaces: 1,
-    });
-    console.log(convertedData);
-    return convertedData;
-  });
-  return curData;
-};
-
-const getCurrencyDataYesterday = async () => {
-  const curData = await needle(
+  await needle(
     "get",
     `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${yesterdayDate()}`,
     {
-      compressed: true,
-      content_type: true,
       parse_response: false,
-      decode_response: true,
     }
   ).then((response) => {
-
-    const convertedData = convert.xml2js(response.body, {
+    response = convert.xml2js(response.body, {
       compact: true,
       spaces: 1,
     });
-    console.log(convertedData);
-    return convertedData;
+    ratesDataYesterday = response.ValCurs.Valute;
   });
 
-  return curData;
+  await needle("get", "http://www.cbr.ru/scripts/XML_daily.asp", {
+    parse_response: false,
+  })
+    .then((response) => {
+      response = convert.xml2js(response.body, {
+        compact: true,
+        spaces: 1,
+      });
+      ratesDataToday = response.ValCurs.Valute;
+      console.log("ratesDataToday>>>>>>>>", ratesDataToday);
+    })
+    .catch((err) => console.log(err));
+
+  const merge = [];
+
+  for (let i = 0; i < ratesDataToday.length; i++) {
+    merge.push({
+      currencyTicker: ratesDataToday[i].CharCode._text,
+      currencyName: ratesDataToday[i].Name._text,
+      currencyNominal: ratesDataToday[i].Nominal._text,
+      currencyPriceToday: String(
+        Number(ratesDataToday[i].Value._text.replace(",", ".")).toFixed(2)
+      ),
+      currencyPriceYesterday: String(
+        Number(ratesDataYesterday[i].Value._text.replace(",", ".")).toFixed(2)
+      ),
+    });
+  }
+  return merge;
 };
 
 app.use(cors());
@@ -73,20 +75,9 @@ app.listen(PORT, () => {
   console.log(`Server starting on port ${PORT}`);
 });
 
-app.get("/today", async (req, res) => {
+app.get("/api", async (req, res) => {
   console.log("get request");
-  const data = await getCurrencyDataToday();
+  const data = await getCurrency();
   console.log("data >>>>>>>>>>> ", JSON.stringify(data));
-  const data2 = "bla";
-  //   res.setEncoding('utf8');
-  res.json(data);
-});
-
-app.get("/yesterday", async (req, res) => {
-  console.log("get request");
-  const data = await getCurrencyDataYesterday();
-  console.log("data >>>>>>>>>>> ", JSON.stringify(data));
-  const data2 = "bla";
-  //   res.setEncoding('utf8');
   res.json(data);
 });
