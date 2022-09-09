@@ -36,7 +36,8 @@ const getCurrency = async () => {
       spaces: 1,
     });
     ratesDataYesterday = response.ValCurs.Valute;
-  });
+  })
+  .catch((err) => console.log('get yesterday', err));
 
   await needle("get", "http://www.cbr.ru/scripts/XML_daily.asp", {
     parse_response: false,
@@ -49,11 +50,11 @@ const getCurrency = async () => {
       ratesDataToday = response.ValCurs.Valute;
       console.log("ratesDataToday>>>>>>>>", ratesDataToday);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log('get today', err));
 
   const merge = [];
 
-  for (let i = 0; i < ratesDataToday.length; i++) {
+  for (let i = 0; i < ratesDataToday.length; i++) {  
     merge.push({
       currencyTicker: ratesDataToday[i].CharCode._text,
       currencyName: ratesDataToday[i].Name._text,
@@ -62,7 +63,11 @@ const getCurrency = async () => {
         Number(ratesDataToday[i].Value._text.replace(",", ".")).toFixed(2)
       ),
       currencyPriceYesterday: String(
-        Number(ratesDataYesterday[i].Value._text.replace(",", ".")).toFixed(2)
+        Number(ratesDataYesterday[i].Value._text.replace(",", ".")).toFixed(2) 
+      ),
+      difference: String(
+        (Number(ratesDataToday[i].Value._text.replace(",", ".")) -
+          Number(ratesDataYesterday[i].Value._text.replace(",", "."))).toFixed(2)
       ),
     });
   }
@@ -72,12 +77,12 @@ const getCurrency = async () => {
 app.use(cors());
 
 app.listen(PORT, () => {
-  console.log(`Server starting on port ${PORT}`);
+  console.log(`Server starting on port ${PORT}`); 
 });
 
 app.get("/api", async (req, res) => {
   console.log("get request");
   const data = await getCurrency();
-  console.log("data >>>>>>>>>>> ", JSON.stringify(data));
+  console.log("data >>>>>>>>>>> ", JSON.stringify(data)); 
   res.json(data);
 });
