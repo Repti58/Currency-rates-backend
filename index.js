@@ -67,22 +67,64 @@ const getCurrency = async () => {
       ),
       difference: String(
         (Number(ratesDataToday[i].Value._text.replace(",", ".")) -
-          Number(ratesDataYesterday[i].Value._text.replace(",", "."))).toFixed(2)
+          Number(ratesDataYesterday[i].Value._text.replace(",", "."))).toFixed(2) 
       ),
     });
   }
   return merge;
 };
 
+const getCurrencyForDate = async (props) => {
+  console.log(props);
+  let currencyForDate;
+  await needle(
+    "get",
+    `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${props}`,
+    {
+      parse_response: false,
+    }
+  ).then((response) => {
+    response = convert.xml2js(response.body, {
+      compact: true,
+      spaces: 1,
+    });
+    currencyForDate = response.ValCurs.Valute;
+  })
+  .catch((err) => console.log('get yesterday', err));
+
+  const currencyForDateRebuild = [];
+
+  for (let i = 0; i < currencyForDate.length; i++) {  
+    currencyForDateRebuild.push({
+      currencyTicker: currencyForDate[i].CharCode._text,
+      currencyName: currencyForDate[i].Name._text,
+      currencyNominal: currencyForDate[i].Nominal._text,
+      currencyPriceToday: String(
+        Number(currencyForDate[i].Value._text.replace(",", ".")).toFixed(2)
+      ),
+      currencyPriceYesterday: '',
+      difference: '',
+    });
+  }
+  return currencyForDateRebuild;  
+}
+
 app.use(cors());
 
 app.listen(PORT, () => {
-  console.log(`Server starting on port ${PORT}`); 
+  console.log(`Server starting on port ${PORT}`);  
 });
 
 app.get("/api", async (req, res) => {
   console.log("get request");
   const data = await getCurrency();
+  console.log("data >>>>>>>>>>> ", JSON.stringify(data)); 
+  res.json(data);
+});
+
+app.get("/date_request", async (req, res) => {
+  console.log("get request CurrencyForDate", req.query.date);
+  const data = await getCurrencyForDate(req.query.date);
   console.log("data >>>>>>>>>>> ", JSON.stringify(data)); 
   res.json(data);
 });
