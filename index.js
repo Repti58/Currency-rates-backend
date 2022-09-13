@@ -39,7 +39,7 @@ const getCurrency = async (props) => {
       console.log(`currencyDate`, currencyDate);
       // console.log("ratesDataToday>>>>>>>>", ratesDataToday);
     })
-    .catch((err) => console.log("get today", err));
+    .catch((err) => console.log("get today", err));  
 
   await needle(
     "get",
@@ -75,8 +75,8 @@ const getCurrency = async (props) => {
       ),
       difference: String(
         (
-          Number(ratesDataToday[i].Value._text.replace(",", ".")) -
-          Number(ratesDataYesterday[i].Value._text.replace(",", "."))
+          Number(ratesDataToday[i].Value._text.replace(",", ".")).toFixed(2) -
+          Number(ratesDataYesterday[i].Value._text.replace(",", ".")).toFixed(2)
         ).toFixed(2)
       ),
     });
