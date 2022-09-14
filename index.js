@@ -35,7 +35,7 @@ const getCurrency = async (props) => {
         compact: true,
         spaces: 1,
       });
-      console.log(`response>>>>>>`, response);
+      console.log(`response get today>>>>>>>>>>`, response.ValCurs.Valute[5]);
       ratesDataToday = response.ValCurs.Valute;
       currencyDate = response.ValCurs._attributes.Date;
       console.log(`currencyDate`, currencyDate);
@@ -51,7 +51,7 @@ const getCurrency = async (props) => {
     }
   )
     .then((response) => {
-      console.log('response', response);
+      console.log('response get yesterday>>>>>>>>>>', response.ValCurs.Valute[5]);
       response = convert.xml2js(response.body, {
         compact: true,
         spaces: 1,
