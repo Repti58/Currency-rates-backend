@@ -64,7 +64,7 @@ const getCurrency = async (props) => {
   const merge = [[]];
   merge.unshift({ currencyDate, prevCurrencyDate });
   if (ratesDataToday) {
-    console.log("ratesDataToday>>>>>>>>>>>>", ratesDataToday);
+    console.log("ratesDataToday>>>>>>>>>>>>", ratesDataToday[0]);
     for (let i = 0; i < ratesDataToday.length; i++) {
       // console.log(
       //   "ratesDataToday[i].CharCode>>>>>>>>>>",
@@ -106,6 +106,7 @@ app.listen(PORT, () => {
 app.get("/api", async (req, res) => {
   console.log("get request");
   const data = await getCurrency(req.query.date);
-  console.log("data >>>>>>>>>>> ", JSON.stringify(data)); 
+  // console.log("data >>>>>>>>>>> ", JSON.stringify(data)); 
+  console.log("data >>>>>>>>>>> ", JSON.stringify(data[0])); 
   res.json(data);
 });
