@@ -7,62 +7,23 @@ const PORT = process.env.port || 3003;
 
 let currencyDate;
 let prevCurrencyDate;
+
 const yesterdayDate = () => {
-  console.log('yesterdayDate func start');
   if (currencyDate) {
-
-
-
-    // const date = new Date(currencyDate.split(".").reverse().join("."));
-    // console.log('date', date);
-    // let dd = date.getDate() - 1;
-    // if (dd < 10) dd = "0" + dd;
-  
-    // let mm = date.getMonth() + 1;
-    // if (mm < 10) mm = "0" + mm;
-  
-    // let yy = date.getFullYear();
-    // if (yy < 10) mm = "0" + yy;
-    // console.log(`yesterdayDate>>>>>>>>>>${dd}/${mm}/${yy}`);
-    // return `${dd}/${mm}/${yy}`;
-
-
-
-
-
-
-
-
     const date = new Date(currencyDate.split(".").reverse().join("."));
-    console.log(`date>>>>>>`, date);
     const yesterdayDate = date.getDate() - 1;
-    console.log(`yesterdayDate>>>>>>`, yesterdayDate);
     date.setDate(yesterdayDate);
-    console.log(`date>>>>>>`, date);
-    
-let dd = date.getDate();
+
+    let dd = date.getDate();
     if (dd < 10) dd = "0" + dd;
-  
+
     let mm = date.getMonth() + 1;
     if (mm < 10) mm = "0" + mm;
-  
+
     let yy = date.getFullYear();
     if (yy < 10) mm = "0" + yy;
-    console.log(`yesterdayDate>>>>>>>>>>${dd}/${mm}/${yy}`);
+
     return `${dd}/${mm}/${yy}`;
-
-
-
-
-
-
-
-
-
-
-
-    // console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString('en-US'));
-    // return date.toLocaleDateString('en-US');
   } else return undefined;
 };
 
@@ -71,8 +32,8 @@ const getCurrency = async (props) => {
   let ratesDataToday;
   let ratesDataYesterday;
 
-  console.log('needle today req start');
-  await needle(    
+  console.log("needle today req start");
+  await needle(
     "get",
     `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${props}`,
     {
@@ -84,16 +45,11 @@ const getCurrency = async (props) => {
         compact: true,
         spaces: 1,
       });
-      // console.log(`response get today>>>>>>>>>>`, response.ValCurs.Valute[5]);
       ratesDataToday = response.ValCurs.Valute;
       currencyDate = response.ValCurs._attributes.Date;
-      console.log(`currencyDate`, currencyDate);
-      // console.log("ratesDataToday>>>>>>>>", ratesDataToday);
-      console.log('needle today req sucsessfull');
     })
     .catch((err) => console.log("get today", err));
 
-  console.log('needle yesterday req start');
   await needle(
     "get",
     `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${yesterdayDate()}`,
@@ -106,25 +62,17 @@ const getCurrency = async (props) => {
         compact: true,
         spaces: 1,
       });
-      // console.log('response get yesterday>>>>>>>>>>', response.ValCurs.Valute[5]);
-      
+
       ratesDataYesterday = response.ValCurs.Valute;
       prevCurrencyDate = response.ValCurs._attributes.Date;
-      // console.log("ratesDataYesterday>>>>>>>>", ratesDataYesterday);
-      console.log('needle yesterday req sucsessfull');
     })
     .catch((err) => console.log("get yesterday", err));
 
-  const merge = [[]];
-  merge.unshift({ currencyDate, prevCurrencyDate });
+  const mergeTwoDatesData = [[]];
+  mergeTwoDatesData.unshift({ currencyDate, prevCurrencyDate });
   if (ratesDataToday) {
-    console.log("ratesDataToday>>>>>>>>>>>>", ratesDataToday[0]);
     for (let i = 0; i < ratesDataToday.length; i++) {
-      // console.log(
-      //   "ratesDataToday[i].CharCode>>>>>>>>>>",
-      //   ratesDataToday[i].CharCode
-      // );
-      merge[1].push({
+      mergeTwoDatesData[1].push({
         id: String(i),
         currencyTicker: !ratesDataToday[i].CharCode
           ? undefined
@@ -148,19 +96,16 @@ const getCurrency = async (props) => {
       });
     }
   }
-  return merge;
+  return mergeTwoDatesData;
 };
 
 app.use(cors());
 
 app.listen(PORT, () => {
-  console.log(`Server starting on port ${PORT}`);
+  // console.log(`Server starting on port ${PORT}`);
 });
 
 app.get("/api", async (req, res) => {
-  console.log("get request");
   const data = await getCurrency(req.query.date);
-  // console.log("data >>>>>>>>>>> ", JSON.stringify(data)); 
-  console.log("data >>>>>>>>>>> ", JSON.stringify(data[0])); 
   res.json(data);
 });
