@@ -8,12 +8,13 @@ const PORT = process.env.port || 3003;
 let currencyDate;
 let prevCurrencyDate;
 const yesterdayDate = () => {
+  console.log('yesterdayDate func start');
   if (currencyDate) {
     const date = new Date(currencyDate.split(".").reverse().join("."));
     // console.log(`date>>>>>>`, date);
     const yesterdayDate = date.getDate() - 1;
     date.setDate(yesterdayDate);
-    console.log('yesterday date>>>>>>>>>>', date.toLocaleDateString());
+    console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString());
     return date.toLocaleDateString();
   } else return undefined;
 };
@@ -23,7 +24,8 @@ const getCurrency = async (props) => {
   let ratesDataToday;
   let ratesDataYesterday;
 
-  await needle(
+  console.log('needle today req start');
+  await needle(    
     "get",
     `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${props}`,
     {
@@ -35,17 +37,19 @@ const getCurrency = async (props) => {
         compact: true,
         spaces: 1,
       });
-      console.log(`response get today>>>>>>>>>>`, response.ValCurs.Valute[5]);
+      // console.log(`response get today>>>>>>>>>>`, response.ValCurs.Valute[5]);
       ratesDataToday = response.ValCurs.Valute;
       currencyDate = response.ValCurs._attributes.Date;
       console.log(`currencyDate`, currencyDate);
       // console.log("ratesDataToday>>>>>>>>", ratesDataToday);
+      console.log('needle today req sucsessfull');
     })
     .catch((err) => console.log("get today", err));
 
+  console.log('needle yesterday req start');
   await needle(
     "get",
-    `http://www.cbr.ru/scripts/XML_daily.asp?date_req=10/09/2022`,
+    `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${yesterdayDate()}`,
     {
       parse_response: false,
     }
@@ -55,11 +59,12 @@ const getCurrency = async (props) => {
         compact: true,
         spaces: 1,
       });
-      console.log('response get yesterday>>>>>>>>>>', response.ValCurs.Valute[5]);
+      // console.log('response get yesterday>>>>>>>>>>', response.ValCurs.Valute[5]);
       
       ratesDataYesterday = response.ValCurs.Valute;
       prevCurrencyDate = response.ValCurs._attributes.Date;
-      console.log("ratesDataYesterday>>>>>>>>", ratesDataYesterday);
+      // console.log("ratesDataYesterday>>>>>>>>", ratesDataYesterday);
+      console.log('needle yesterday req sucsessfull');
     })
     .catch((err) => console.log("get yesterday", err));
 
