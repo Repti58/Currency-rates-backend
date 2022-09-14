@@ -106,6 +106,6 @@ app.listen(PORT, () => {
 app.get("/api", async (req, res) => {
   console.log("get request");
   const data = await getCurrency(req.query.date);
-  console.log("data >>>>>>>>>>> ", JSON.stringify(data));
+  console.log("data >>>>>>>>>>> ", JSON.stringify(data)); 
   res.json(data);
 });
