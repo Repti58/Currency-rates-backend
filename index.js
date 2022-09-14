@@ -39,8 +39,30 @@ const yesterdayDate = () => {
     console.log(`yesterdayDate>>>>>>`, yesterdayDate);
     date.setDate(yesterdayDate);
     console.log(`date>>>>>>`, date);
-    console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString('en-US'));
-    return date.toLocaleDateString('en-US');
+    
+let dd = date.getDate();
+    if (dd < 10) dd = "0" + dd;
+  
+    let mm = date.getMonth() + 1;
+    if (mm < 10) mm = "0" + mm;
+  
+    let yy = date.getFullYear();
+    if (yy < 10) mm = "0" + yy;
+    console.log(`yesterdayDate>>>>>>>>>>${dd}/${mm}/${yy}`);
+    return `${dd}/${mm}/${yy}`;
+
+
+
+
+
+
+
+
+
+
+
+    // console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString('en-US'));
+    // return date.toLocaleDateString('en-US');
   } else return undefined;
 };
 
