@@ -45,7 +45,7 @@ const getCurrency = async (props) => {
 
   await needle(
     "get",
-    `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${props}`,
+    `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${yesterdayDate()}`,
     {
       parse_response: false,
     }
