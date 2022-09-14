@@ -10,14 +10,37 @@ let prevCurrencyDate;
 const yesterdayDate = () => {
   console.log('yesterdayDate func start');
   if (currencyDate) {
-    const date = new Date(currencyDate.split(".").reverse().join("."));
+
+
+
+    // const date = new Date(currencyDate.split(".").reverse().join("."));
+    // console.log('date', date);
+    // let dd = date.getDate() - 1;
+    // if (dd < 10) dd = "0" + dd;
+  
+    // let mm = date.getMonth() + 1;
+    // if (mm < 10) mm = "0" + mm;
+  
+    // let yy = date.getFullYear();
+    // if (yy < 10) mm = "0" + yy;
+    // console.log(`yesterdayDate>>>>>>>>>>${dd}/${mm}/${yy}`);
+    // return `${dd}/${mm}/${yy}`;
+
+
+
+
+
+
+
+
+    const date = new Date(Date.UTC(currencyDate.split(".").reverse().join(".")));
     console.log(`date>>>>>>`, date);
     const yesterdayDate = date.getDate() - 1;
     console.log(`yesterdayDate>>>>>>`, yesterdayDate);
     date.setDate(yesterdayDate);
     console.log(`date>>>>>>`, date);
-    console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString('en-GB'));
-    return date.toLocaleDateString('en-GB');
+    console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString('en-US'));
+    return date.toLocaleDateString('en-US');
   } else return undefined;
 };
 
