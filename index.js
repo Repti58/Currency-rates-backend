@@ -11,8 +11,9 @@ const yesterdayDate = () => {
   console.log('yesterdayDate func start');
   if (currencyDate) {
     const date = new Date(currencyDate.split(".").reverse().join("."));
-    // console.log(`date>>>>>>`, date);
+    console.log(`date>>>>>>`, date);
     const yesterdayDate = date.getDate() - 1;
+    console.log(`yesterdayDate>>>>>>`, yesterdayDate);
     date.setDate(yesterdayDate);
     console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString());
     return date.toLocaleDateString();
