@@ -33,7 +33,7 @@ const yesterdayDate = () => {
 
 
 
-    const date = new Date(Date.UTC(currencyDate.split(".").reverse().join(".")));
+    const date = new Date(currencyDate.split(".").reverse().join("."));
     console.log(`date>>>>>>`, date);
     const yesterdayDate = date.getDate() - 1;
     console.log(`yesterdayDate>>>>>>`, yesterdayDate);
