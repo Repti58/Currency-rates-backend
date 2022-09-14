@@ -10,10 +10,10 @@ let prevCurrencyDate;
 const yesterdayDate = () => {
   if (currencyDate) {
     const date = new Date(currencyDate.split(".").reverse().join("."));
-    console.log(`date>>>>>>`, date);
+    // console.log(`date>>>>>>`, date);
     const yesterdayDate = date.getDate() - 1;
     date.setDate(yesterdayDate);
-    console.log(date);
+    console.log('yesterday date>>>>>>>>>>', date.toLocaleDateString());
     return date.toLocaleDateString();
   } else return undefined;
 };
