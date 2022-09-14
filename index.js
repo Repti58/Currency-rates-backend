@@ -66,10 +66,10 @@ const getCurrency = async (props) => {
   if (ratesDataToday) {
     console.log("ratesDataToday>>>>>>>>>>>>", ratesDataToday);
     for (let i = 0; i < ratesDataToday.length; i++) {
-      console.log(
-        "ratesDataToday[i].CharCode>>>>>>>>>>",
-        ratesDataToday[i].CharCode
-      );
+      // console.log(
+      //   "ratesDataToday[i].CharCode>>>>>>>>>>",
+      //   ratesDataToday[i].CharCode
+      // );
       merge[1].push({
         id: String(i),
         currencyTicker: !ratesDataToday[i].CharCode
