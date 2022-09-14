@@ -57,7 +57,7 @@ const getCurrency = async (props) => {
       });
       ratesDataYesterday = response.ValCurs.Valute;
       prevCurrencyDate = response.ValCurs._attributes.Date;
-      // console.log("ratesDataYesterday>>>>>>>>", ratesDataYesterday);
+      console.log("ratesDataYesterday>>>>>>>>", ratesDataYesterday);
     })
     .catch((err) => console.log("get yesterday", err));
 
