@@ -15,6 +15,7 @@ const yesterdayDate = () => {
     const yesterdayDate = date.getDate() - 1;
     console.log(`yesterdayDate>>>>>>`, yesterdayDate);
     date.setDate(yesterdayDate);
+    console.log(`date>>>>>>`, date);
     console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString());
     return date.toLocaleDateString();
   } else return undefined;
