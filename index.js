@@ -16,8 +16,8 @@ const yesterdayDate = () => {
     console.log(`yesterdayDate>>>>>>`, yesterdayDate);
     date.setDate(yesterdayDate);
     console.log(`date>>>>>>`, date);
-    console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString());
-    return date.toLocaleDateString();
+    console.log('yesterday date func sucsessful>>>>>>>>>>', date.toLocaleDateString('en-GB'));
+    return date.toLocaleDateString('en-GB');
   } else return undefined;
 };
 
