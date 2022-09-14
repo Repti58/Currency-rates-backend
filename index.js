@@ -51,11 +51,12 @@ const getCurrency = async (props) => {
     }
   )
     .then((response) => {
-      console.log('response get yesterday>>>>>>>>>>', response.ValCurs.Valute[5]);
       response = convert.xml2js(response.body, {
         compact: true,
         spaces: 1,
       });
+      console.log('response get yesterday>>>>>>>>>>', response.ValCurs.Valute[5]);
+      
       ratesDataYesterday = response.ValCurs.Valute;
       prevCurrencyDate = response.ValCurs._attributes.Date;
       console.log("ratesDataYesterday>>>>>>>>", ratesDataYesterday);
