@@ -71,6 +71,7 @@ const getCurrency = async (props) => {
         ratesDataToday[i].CharCode
       );
       merge[1].push({
+        id: String(i),
         currencyTicker: !ratesDataToday[i].CharCode
           ? undefined
           : ratesDataToday[i].CharCode._text,
