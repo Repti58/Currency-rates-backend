@@ -51,6 +51,7 @@ const getCurrency = async (props) => {
     }
   )
     .then((response) => {
+      console.log('response', response);
       response = convert.xml2js(response.body, {
         compact: true,
         spaces: 1,
