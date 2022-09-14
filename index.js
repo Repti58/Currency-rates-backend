@@ -109,3 +109,10 @@ app.get("/api", async (req, res) => {
   const data = await getCurrency(req.query.date);
   res.json(data);
 });
+
+app.get("/", async (req, res) => {
+  // const data = await getCurrency(req.query.date);
+  res.json("no request data");
+});
+
+
