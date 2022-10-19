@@ -10,15 +10,13 @@ https://github.com/repti85/Currency-rates.git
 <img src="img/currency-rates-scr.png" width="600">
 
 ## Contain:
-- **Data on exchange rates for any date**
-- **Rates change display**
-- **Switcher tabular view/mosaic view**
+the application sends a request to the api of the Central Bank of the Russian Federation for the required date and the previous one and receives data in xml format, which it processes and converts into an array with objects, including:
+- letter code,
+- Name,
+- amount,
+- price on the requested date,
+- previous date price
 
 ## Features:
-- **Adaptive layout**
-- **Technologies used: HTML, CSS, Bootstrap, JavaScript, React, Redux/Redux-toolkit**
+**Technologies used: HTML, CSS, Bootstrap, JavaScript, React, Redux/Redux-toolkit**
 
-## Appearance:
-<a href="https://repti85.github.io/Currency-rates/">
-   
-</a>
