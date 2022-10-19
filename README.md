@@ -5,7 +5,9 @@ Currency rates
 </h1>
 <p align="center">https://repti85.github.io/Currency-rates</p>
 <h3>This web app using frontend deployed on "Github pages"</h3>
-https://github.com/repti85/Currency-rates.git
+<a href="https://repti85.github.io/Currency-rates/">
+  https://github.com/repti85/Currency-rates.git
+  </a>
 <br><br>
 <img src="img/screenshot_cut.png" width="600">
 
