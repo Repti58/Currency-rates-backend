@@ -22,5 +22,7 @@ The application sends a request to the API of the Central Bank of the Russian Fe
 - previous date price
 
 ## Features:
-**Technologies used: HTML, CSS, Bootstrap, JavaScript, React, Redux/Redux-toolkit**
+**Language: JavaScript**
+
+**Modules used: ExpressJS, Needle, Cors, XML-JS**
 
