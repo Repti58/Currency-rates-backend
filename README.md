@@ -7,7 +7,7 @@ Currency rates
 <h3>This web app using frontend deployed on "Github pages"</h3>
 https://github.com/repti85/Currency-rates.git
 <br><br>
-<img src="img/screenshot.png" width="250">
+<img src="img/currency-rates-scr.png" width="600">
 
 ## Contain:
 - **Data on exchange rates for any date**
