@@ -1,7 +1,6 @@
 <h1 align="center">
-<a href="https://repti85.github.io/Currency-rates">
-Currency rates
-</a>
+Currency rates (backend)
+
 </h1>
 <p align="center">https://repti85.github.io/Currency-rates</p>
 <h3>This web app using frontend deployed on "Github pages"</h3>
