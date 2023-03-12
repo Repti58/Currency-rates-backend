@@ -2,6 +2,7 @@ const express = require("express");
 const needle = require("needle");
 const cors = require("cors");
 const convert = require("xml-js");
+const { response } = require("express");
 const app = express();
 const PORT = process.env.port || 3003;
 
@@ -99,18 +100,64 @@ const getCurrency = async (props) => {
   return mergeTwoDatesData;
 };
 
+
+// -----!!-----Get dynamic rates data for choosen currency
+const getRatesDynamic = async (props) => {
+  debugger
+  // const dateStart = props.dateStart;
+  // const dateEnd = props.dateEnd;
+  // const currencyName = props.currencyName;
+  let currencyDynamicArray;
+  await needle(
+    "get",
+    `https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=${props.dateStart}&date_req2=${props.dateEnd}&VAL_NM_RQ=${props.currencyName}`,
+    {
+      parse_response: false,
+    }
+  )
+    .then((response) => {
+      debugger
+      response = convert.xml2js(response.body, {
+        compact: true,
+        spaces: 1,
+      });
+      currencyDynamicArray = response.ValCurs.Record
+      // ratesDataToday = response.ValCurs.Valute;
+      // currencyDate = response.ValCurs._attributes.Date;
+    })
+    .catch((err) => console.log("get today", err));
+    let ratesDynamic = []
+    for (let i = 0; i < currencyDynamicArray.length; i++) {
+      ratesDynamic.push([currencyDynamicArray[i]._attributes.Date, Number(Number(currencyDynamicArray[i].Value._text.replace(",", ".")).toFixed(2))])
+    }
+    return ratesDynamic
+  }
+    
+
+
+
 app.use(cors());
 
 app.listen(PORT, () => {
-  // console.log(`Server starting on port ${PORT}`);
+  console.log(`Server starting on port ${PORT}`);
 });
 
 app.get("/api", async (req, res) => {
+  debugger;
+  console.log(`incoming request ${req.query.date}`);
   const data = await getCurrency(req.query.date);
   res.json(data);
 });
 
+app.get("/ratesDynamic", async (req, res) => {
+  debugger;
+  const ratesDynamic = await getRatesDynamic(req.query); 
+  console.log(ratesDynamic); 
+  res.json(ratesDynamic);
+});
+
 app.get("/", async (req, res) => {
+  debugger
   // const data = await getCurrency(req.query.date);
   res.json("no request data");
 });
