@@ -44,6 +44,7 @@ const getCurrency = async (props) => {
     .then((response) => {
       response = convert.xml2js(response.body, {
         compact: true,
+        mergeAttrs: true,
         spaces: 1,
       });
       ratesDataToday = response.ValCurs.Valute;
@@ -74,10 +75,11 @@ const getCurrency = async (props) => {
   if (ratesDataToday) {
     for (let i = 0; i < ratesDataToday.length; i++) {
       mergeTwoDatesData[1].push({
-        id: String(i),
+        id: String(i),        
         currencyTicker: !ratesDataToday[i].CharCode
           ? undefined
           : ratesDataToday[i].CharCode._text,
+        currencyCode: ratesDataToday[i]._attributes.ID,
         currencyName: ratesDataToday[i].Name._text,
         currencyNominal: ratesDataToday[i].Nominal._text,
         currencyPriceToday: String(
@@ -146,6 +148,7 @@ app.get("/api", async (req, res) => {
   debugger;
   console.log(`incoming request ${req.query.date}`);
   const data = await getCurrency(req.query.date);
+  console.log(data);
   res.json(data);
 });
 
