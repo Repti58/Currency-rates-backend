@@ -2,7 +2,6 @@ const express = require("express");
 const needle = require("needle");
 const cors = require("cors");
 const convert = require("xml-js");
-const { response } = require("express");
 const app = express();
 const PORT = process.env.port || 3003;
 
@@ -47,6 +46,7 @@ const getCurrency = async (props) => {
         mergeAttrs: true,
         spaces: 1,
       });
+      // console.dir(response, {depth: null})
       ratesDataToday = response.ValCurs.Valute;
       currencyDate = response.ValCurs._attributes.Date;
     })
@@ -75,7 +75,7 @@ const getCurrency = async (props) => {
   if (ratesDataToday) {
     for (let i = 0; i < ratesDataToday.length; i++) {
       mergeTwoDatesData[1].push({
-        id: String(i),        
+        id: String(i),
         currencyTicker: !ratesDataToday[i].CharCode
           ? undefined
           : ratesDataToday[i].CharCode._text,
@@ -102,13 +102,9 @@ const getCurrency = async (props) => {
   return mergeTwoDatesData;
 };
 
-
 // -----!!-----Get dynamic rates data for choosen currency
 const getRatesDynamic = async (props) => {
-  debugger
-  // const dateStart = props.dateStart;
-  // const dateEnd = props.dateEnd;
-  // const currencyName = props.currencyName;
+  debugger;
   let currencyDynamicArray;
   await needle(
     "get",
@@ -118,25 +114,25 @@ const getRatesDynamic = async (props) => {
     }
   )
     .then((response) => {
-      debugger
+      debugger;
       response = convert.xml2js(response.body, {
         compact: true,
         spaces: 1,
       });
-      currencyDynamicArray = response.ValCurs.Record
-      // ratesDataToday = response.ValCurs.Valute;
-      // currencyDate = response.ValCurs._attributes.Date;
+      currencyDynamicArray = response.ValCurs.Record;
     })
     .catch((err) => console.log("get today", err));
-    let ratesDynamic = []
-    for (let i = 0; i < currencyDynamicArray.length; i++) {
-      ratesDynamic.push([currencyDynamicArray[i]._attributes.Date, Number(Number(currencyDynamicArray[i].Value._text.replace(",", ".")).toFixed(2))])
-    }
-    return ratesDynamic
+  let ratesDynamic = [];
+  for (let i = 0; i < currencyDynamicArray.length; i++) {
+    ratesDynamic.push([
+      currencyDynamicArray[i]._attributes.Date,
+      Number(
+        Number(currencyDynamicArray[i].Value._text.replace(",", ".")).toFixed(2)
+      ),
+    ]);
   }
-    
-
-
+  return ratesDynamic;
+};
 
 app.use(cors());
 
@@ -148,21 +144,19 @@ app.get("/api", async (req, res) => {
   debugger;
   console.log(`incoming request ${req.query.date}`);
   const data = await getCurrency(req.query.date);
-  console.log(data);
+  // console.log(data);
   res.json(data);
 });
 
 app.get("/ratesDynamic", async (req, res) => {
   debugger;
-  const ratesDynamic = await getRatesDynamic(req.query); 
-  console.log(ratesDynamic); 
+  const ratesDynamic = await getRatesDynamic(req.query);
+  // console.log(ratesDynamic);
   res.json(ratesDynamic);
 });
 
 app.get("/", async (req, res) => {
-  debugger
+  debugger;
   // const data = await getCurrency(req.query.date);
   res.json("no request data");
 });
-
-
