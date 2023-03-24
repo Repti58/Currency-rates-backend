@@ -3,6 +3,7 @@ const needle = require("needle");
 const cors = require("cors");
 const convert = require("xml-js");
 const app = express();
+const currencyNames = require("./CurrencyNames");
 const PORT = process.env.port || 3003;
 
 let currencyDate;
@@ -28,11 +29,12 @@ const yesterdayDate = () => {
 };
 
 const getCurrency = async (props) => {
+  console.log(currencyNames("rrr"));
   debugger;
   let ratesDataToday;
   let ratesDataYesterday;
 
-  console.log("needle today req start");
+  // console.log("needle today req start");
   await needle(
     "get",
     `http://www.cbr.ru/scripts/XML_daily.asp?date_req=${props}`,
@@ -74,28 +76,27 @@ const getCurrency = async (props) => {
   mergeTwoDatesData.unshift({ currencyDate, prevCurrencyDate });
   if (ratesDataToday) {
     for (let i = 0; i < ratesDataToday.length; i++) {
+      const currencyNominal = ratesDataToday[i].Nominal._text;
+      const currencyPriceToday =
+        ratesDataToday[i].Value._text.replace(",", ".") / currencyNominal;
+      // console.log(currencyPriceToday);
+      // console.log(
+      //   `${ratesDataToday[i].CharCode._text} + ${currencyNominal} + ${currencyPriceToday}`
+      // );
+      const currencyPriceYesterday =
+        ratesDataYesterday[i].Value._text.replace(",", ".") / currencyNominal;
       mergeTwoDatesData[1].push({
         id: String(i),
         currencyTicker: !ratesDataToday[i].CharCode
           ? undefined
           : ratesDataToday[i].CharCode._text,
         currencyCode: ratesDataToday[i]._attributes.ID,
-        currencyName: ratesDataToday[i].Name._text,
-        currencyNominal: ratesDataToday[i].Nominal._text,
-        currencyPriceToday: String(
-          Number(ratesDataToday[i].Value._text.replace(",", ".")).toFixed(2)
-        ),
-        currencyPriceYesterday: String(
-          Number(ratesDataYesterday[i].Value._text.replace(",", ".")).toFixed(2)
-        ),
-        difference: String(
-          (
-            Number(ratesDataToday[i].Value._text.replace(",", ".")).toFixed(2) -
-            Number(ratesDataYesterday[i].Value._text.replace(",", ".")).toFixed(
-              2
-            )
-          ).toFixed(2)
-        ),
+        // currencyName: ratesDataToday[i].Name._text,
+        currencyName: currencyNames(ratesDataToday[i].CharCode._text),
+        // currencyNominal: ratesDataToday[i].Nominal._text,
+        currencyPriceToday: currencyPriceToday.toFixed(3),
+        currencyPriceYesterday: currencyPriceYesterday.toFixed(3),
+        difference: (currencyPriceToday - currencyPriceYesterday).toFixed(3),
       });
     }
   }
@@ -103,35 +104,44 @@ const getCurrency = async (props) => {
 };
 
 // -----!!-----Get dynamic rates data for choosen currency
-const getRatesDynamic = async (props) => {
+const getRatesDynamic = async (data) => {
   debugger;
-  let currencyDynamicArray;
-  await needle(
-    "get",
-    `https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=${props.dateStart}&date_req2=${props.dateEnd}&VAL_NM_RQ=${props.currencyName}`,
-    {
-      parse_response: false,
+  if (!data.dateStart) return "start date is empty";
+  else if (!data.dateEnd) return "end date is empty";
+  else if (!data.currencyName) return "currency name is empty";
+  else {
+    let currencyDynamicArray;
+    await needle(
+      "get",
+      `https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=${data.dateStart}&date_req2=${data.dateEnd}&VAL_NM_RQ=${data.currencyName}`,
+      {
+        parse_response: false,
+      }
+    )
+      .then((response) => {
+        debugger;
+        response = convert.xml2js(response.body, {
+          compact: true,
+          spaces: 1,
+        });
+        currencyDynamicArray = response.ValCurs.Record;
+        // console.log(currencyDynamicArray);
+      })
+      .catch((err) => console.log("get today", err));
+    let ratesDynamic = [];
+    for (let i = 0; i < currencyDynamicArray.length; i++) {
+      const currencyValue = currencyDynamicArray[i].Value._text.replace(
+        ",",
+        "."
+      );
+      const currencyNominal = currencyDynamicArray[i].Nominal._text;
+      ratesDynamic.push([
+        currencyDynamicArray[i]._attributes.Date,
+        Number((currencyValue / currencyNominal).toFixed(2)),
+      ]);
     }
-  )
-    .then((response) => {
-      debugger;
-      response = convert.xml2js(response.body, {
-        compact: true,
-        spaces: 1,
-      });
-      currencyDynamicArray = response.ValCurs.Record;
-    })
-    .catch((err) => console.log("get today", err));
-  let ratesDynamic = [];
-  for (let i = 0; i < currencyDynamicArray.length; i++) {
-    ratesDynamic.push([
-      currencyDynamicArray[i]._attributes.Date,
-      Number(
-        Number(currencyDynamicArray[i].Value._text.replace(",", ".")).toFixed(2)
-      ),
-    ]);
+    return ratesDynamic;
   }
-  return ratesDynamic;
 };
 
 app.use(cors());
@@ -150,6 +160,9 @@ app.get("/api", async (req, res) => {
 
 app.get("/ratesDynamic", async (req, res) => {
   debugger;
+  console.log("incoming request ratesDynamic");
+  console.log(req.query);
+
   const ratesDynamic = await getRatesDynamic(req.query);
   // console.log(ratesDynamic);
   res.json(ratesDynamic);
