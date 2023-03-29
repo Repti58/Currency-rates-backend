@@ -111,6 +111,8 @@ const getRatesDynamic = async (data) => {
   else if (!data.currencyName) return "currency name is empty";
   else {
     let currencyDynamicArray;
+    let ratesDynamic = [];
+
     await needle(
       "get",
       `https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=${data.dateStart}&date_req2=${data.dateEnd}&VAL_NM_RQ=${data.currencyName}`,
@@ -125,21 +127,20 @@ const getRatesDynamic = async (data) => {
           spaces: 1,
         });
         currencyDynamicArray = response.ValCurs.Record;
-        // console.log(currencyDynamicArray);
+        console.log("currencyDynamicArray", currencyDynamicArray);
+        for (let i = 0; i < currencyDynamicArray.length; i++) {
+          const currencyValue = currencyDynamicArray[i].Value._text.replace(
+            ",",
+            "."
+          );
+          const currencyNominal = currencyDynamicArray[i].Nominal._text;
+          ratesDynamic.push([
+            currencyDynamicArray[i]._attributes.Date,
+            Number((currencyValue / currencyNominal).toFixed(2)),
+          ]);
+        }
       })
-      .catch((err) => console.log("get today", err));
-    let ratesDynamic = [];
-    for (let i = 0; i < currencyDynamicArray.length; i++) {
-      const currencyValue = currencyDynamicArray[i].Value._text.replace(
-        ",",
-        "."
-      );
-      const currencyNominal = currencyDynamicArray[i].Nominal._text;
-      ratesDynamic.push([
-        currencyDynamicArray[i]._attributes.Date,
-        Number((currencyValue / currencyNominal).toFixed(2)),
-      ]);
-    }
+      .catch((err) => console.log("get dynamic", err));
     return ratesDynamic;
   }
 };
