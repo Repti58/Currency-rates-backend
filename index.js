@@ -15,22 +15,17 @@ const yesterdayDate = () => {
     const yesterdayDate = date.getDate() - 1;
     date.setDate(yesterdayDate);
 
-    let dd = date.getDate();
-    if (dd < 10) dd = "0" + dd;
+    let day = String(date.getDate()).padStart(2, 0);
 
-    let mm = date.getMonth() + 1;
-    if (mm < 10) mm = "0" + mm;
+    let month = String(date.getMonth() + 1).padStart(2, 0);
 
-    let yy = date.getFullYear();
-    if (yy < 10) mm = "0" + yy;
+    let year = date.getFullYear();
 
-    return `${dd}/${mm}/${yy}`;
+    return `${day}/${month}/${year}`;
   } else return undefined;
 };
 
 const getCurrency = async (props) => {
-  console.log(currencyNames("rrr"));
-  debugger;
   let ratesDataToday;
   let ratesDataYesterday;
 
