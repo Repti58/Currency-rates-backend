@@ -14,12 +14,13 @@ Currency rates (backend)
 https://repti58.github.io/Currency-rates
 
 ## Implementation:
-The application sends a request to the API of the Central Bank of the Russian Federation for the required date and the previous one and receives data in xml format, which it processes and converts into an array with objects, including:
+1. The application sends a request to the API of the Central Bank of the Russian Federation for the required date and the previous one and receives data in xml format, which it processes and converts into an array with objects, including:
 - letter code,
-- amount,
 - Name,
-- price on the requested date,
-- previous date price
+- price on the requested date (amount calculated),
+- previous date price (amount calculated)
+
+2. Generates a request for the selected currency and selected period , receives data via API of the Central Bank of Russian Federation in xml format, converts it to json, forms an array with data and sends it to the frontend
 
 ## Features:
 **Language: JavaScript**
