@@ -8,7 +8,8 @@ Currency rates (backend)
 <br><br>
 
 <a href="https://repti58.github.io/Currency-rates/">
-<img src="img/screenshot_cut.png" width="600">
+<img src="img/list.png" width="600">
+<img src="img/chart.png" width="600">
 </a>
 
 https://repti58.github.io/Currency-rates
