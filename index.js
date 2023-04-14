@@ -128,10 +128,10 @@ const getRatesDynamic = async (data) => {
             ",",
             "."
           );
-          const currencyNominal = currencyDynamicArray[i].Nominal._text;
+          const currencyNominal = currencyDynamicArray[i].Nominal._text;         
           ratesDynamic.push([
             currencyDynamicArray[i]._attributes.Date,
-            Number((currencyValue / currencyNominal).toFixed(2)),
+            (Number(currencyValue / currencyNominal).toFixed(2)),
           ]);
         }
       })
